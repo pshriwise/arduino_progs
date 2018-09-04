@@ -5,7 +5,7 @@
 #define TRIGGER_DELAY 70 // milliseconds
 
 // how many times measurement is made to average
-#define NUM_READS 10 
+#define NUM_READS 3
 
 // how long between distance reads
 #define TIME_BETWEEN_MEASUREMENT 2500 // milliseconds
@@ -30,7 +30,7 @@ double dist_read() {
     // trigger signal
     trigger();  
     echo_sum = echo_sum + pulseIn(ECHO_CH, HIGH);
-    delay(70);
+    delay(TRIGGER_DELAY);
   }
   double dist = (double)echo_sum / (double)NUM_READS;
   return (dist * DIST_CONV) + CALIBRATION_OFFSET;
