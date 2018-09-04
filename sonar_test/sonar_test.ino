@@ -10,8 +10,6 @@
 // how long between distance reads
 #define TIME_BETWEEN_MEASUREMENT 2500 // milliseconds
 
-#define CALIBRATION_OFFSET 0.0 // inches (TO-DO: map out this value)
-
 double DIST_CONV = 1.0/148.0; // SOS in inches per second halved
 
 // triggers the sonar signal
@@ -33,7 +31,7 @@ double dist_read() {
     delay(TRIGGER_DELAY);
   }
   double dist = (double)echo_sum / (double)NUM_READS;
-  return (dist * DIST_CONV) + CALIBRATION_OFFSET;
+  return dist * DIST_CONV;
 }
 
 void setup() {
