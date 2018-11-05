@@ -1,6 +1,7 @@
-#define ENA 9
-#define IN1 6
-#define IN2 7
+#define IN1 5
+#define IN2 6
+#define ENA 7
+#define LED 13
 
 #define MOTOR_DUTY 200
 
@@ -8,9 +9,11 @@ void setup() {
   pinMode(ENA, OUTPUT);
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
+  pinMode(LED, OUTPUT);
 }
 
 void motor_forward() {
+  digitalWrite(LED, HIGH);  
   // set switches
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, HIGH);
@@ -19,6 +22,7 @@ void motor_forward() {
 }
 
 void motor_backward() {
+  digitalWrite(LED, HIGH);
   // set switches
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
@@ -27,6 +31,7 @@ void motor_backward() {
 }
 
 void motor_stop() {
+  digitalWrite(LED, LOW);
   // set switches
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, LOW);
@@ -47,4 +52,6 @@ void loop() {
   pause();
   motor_backward();
   pause();
+  motor_stop();
+  pause();  
 }
