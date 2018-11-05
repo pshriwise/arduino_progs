@@ -25,7 +25,9 @@
 
 
 // CONTROLS
-#define STOP_BTN 2
+#define STP_BTN 2
+#define FWD_BTN 3
+#define BWD_BTN 4
 
 double DIST_CONV = 1.0/148.0; // SOS in inches per second halved
 
@@ -70,7 +72,9 @@ void setup() {
   pinMode(LED_CH, OUTPUT);
 
   //setup controls
-  pinMode(STOP_BTN, INPUT);
+  pinMode(STP_BTN, INPUT);
+  pinMode(FWD_BTN, INPUT);
+  pinMode(BWD_BTN, INPUT);
   
   // setup output
   Serial.begin(9600);
@@ -114,7 +118,7 @@ void motor_stop() {
 void loop() {
 
   // motor disable check
-  if (digitalRead(STOP_BTN)) {
+  if (digitalRead(STP_BTN)) {
     MOTOR_ENABLED = !MOTOR_ENABLED;
     if (motor_disabled()) motor_stop();
     press_wait();
@@ -140,6 +144,6 @@ void loop() {
   // wait for button state to return to low
 void press_wait() {
   while (true) {
-    if (!digitalRead(STOP_BTN)) { return; }
+    if (!digitalRead(STP_BTN)) { return; }
   }
 }
