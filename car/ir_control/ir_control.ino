@@ -1,23 +1,23 @@
-
-/*  ___   ___  ___  _   _  ___   ___   ____ ___  ____  
- * / _ \ /___)/ _ \| | | |/ _ \ / _ \ / ___) _ \|    \ 
+'
+/*  ___   ___  ___  _   _  ___   ___   ____ ___  ____
+ * / _ \ /___)/ _ \| | | |/ _ \ / _ \ / ___) _ \|    \
  *| |_| |___ | |_| | |_| | |_| | |_| ( (__| |_| | | | |
  * \___/(___/ \___/ \__  |\___/ \___(_)____)___/|_|_|_|
- *                  (____/    
+ *                  (____/
  * www.osoyoo.com IR remote control smart car
  * program tutorial http://osoyoo.com/2018/12/14/osoyoo-smart-car-lesson-2-control-robot-car-through-infrared-remote/
  *  Copyright John Yu
  */
-#include <IRremote.h>  
-#define IR_PIN    10 //IR receiver Signal pin connect to Arduino pin D2 
+#include <IRremote.h>
+#define IR_PIN    10 //IR receiver Signal pin connect to Arduino pin D2
  IRrecv IR(IR_PIN);  //   IRrecv object  IR get code from IR remoter
- decode_results IRresults;   
+ decode_results IRresults;
 #define speedPinR 9    //  RIGHT PWM pin connect MODEL-X ENA
-#define RightDirectPin1  12    //Right Motor direction pin 1 to MODEL-X IN1 
+#define RightDirectPin1  12    //Right Motor direction pin 1 to MODEL-X IN1
 #define RightDirectPin2  11    //Right Motor direction pin 2 to MODEL-X IN2
 #define speedPinL 6    // Left PWM pin connect MODEL-X ENB
-#define LeftDirectPin1  7    //Left Motor direction pin 1 to MODEL-X IN3 
-#define LeftDirectPin2  8   //Left Motor direction pin 1 to MODEL-X IN4 
+#define LeftDirectPin1  7    //Left Motor direction pin 1 to MODEL-X IN3
+#define LeftDirectPin2  8   //Left Motor direction pin 1 to MODEL-X IN4
 
  #define IR_ADVANCE       0x00FF18E7       //code from IR controller "▲" button
  #define IR_BACK          0x00FF4AB5       //code from IR controller "▼" button
@@ -29,12 +29,12 @@
 #define SPEED 100
 
 enum DN
-{ 
+{
   GO_ADVANCE, //go forward
   GO_LEFT, //left turn
   GO_RIGHT,//right turn
   GO_BACK,//backward
-  STOP_STOP, 
+  STOP_STOP,
   DEF
 }Drive_Num=DEF;
 
@@ -106,7 +106,7 @@ void do_IR_Tick()
       IR.resume();
       return;
     }
-    
+
     if(IRresults.value==IR_ADVANCE || IRresults.value == 741245183)
     {
       Serial.print("Forward");
@@ -131,13 +131,13 @@ void do_IR_Tick()
     }
     IRresults.value = 0;
     IR.resume();
-  } 
+  }
 }
 
 /**************car control**************/
 void do_Drive_Tick()
 {
-    switch (Drive_Num) 
+    switch (Drive_Num)
     {
       case GO_ADVANCE:go_Advance();JogFlag = true;JogTimeCnt = 1;JogTime=millis();break;//if GO_ADVANCE code is detected, then go advance
       case GO_LEFT: go_Left();JogFlag = true;JogTimeCnt = 1;JogTime=millis();break;//if GO_LEFT code is detected, then turn left
@@ -152,16 +152,16 @@ void do_Drive_Tick()
    if(millis()-JogTime>=200)
     {
       JogTime=millis();
-      if(JogFlag == true) 
+      if(JogFlag == true)
       {
         stopFlag = false;
-        if(JogTimeCnt <= 0) 
+        if(JogTimeCnt <= 0)
         {
           JogFlag = false; stopFlag = true;
         }
         JogTimeCnt--;
       }
-      if(stopFlag == true) 
+      if(stopFlag == true)
       {
         JogTimeCnt=0;
         //stop_Stop();
@@ -172,17 +172,17 @@ void do_Drive_Tick()
 void setup()
 {
   Serial.begin(9600);
-  pinMode(RightDirectPin1, OUTPUT); 
-  pinMode(RightDirectPin2, OUTPUT); 
-  pinMode(speedPinL, OUTPUT);  
+  pinMode(RightDirectPin1, OUTPUT);
+  pinMode(RightDirectPin2, OUTPUT);
+  pinMode(speedPinL, OUTPUT);
   pinMode(LeftDirectPin1, OUTPUT);
-  pinMode(LeftDirectPin2, OUTPUT); 
-  pinMode(speedPinR, OUTPUT); 
+  pinMode(LeftDirectPin2, OUTPUT);
+  pinMode(speedPinR, OUTPUT);
   stop_Stop();
 
-  pinMode(IR_PIN, INPUT); 
-  digitalWrite(IR_PIN, HIGH);  
-  IR.enableIRIn();       
+  pinMode(IR_PIN, INPUT);
+  digitalWrite(IR_PIN, HIGH);
+  IR.enableIRIn();
   Serial.print("Setup complete");
 }
 
