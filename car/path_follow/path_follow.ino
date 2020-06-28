@@ -29,9 +29,9 @@
 #define LFSensor_3 A3
 #define LFSensor_4 A4
 
-#define TURN_SPEED 180
-#define FWD_SPEED 100
-#define CONTROL_DELAY 100 // how long to allow each command to run
+#define TURN_SPEED 220
+#define FWD_SPEED 220
+#define CONTROL_DELAY 50 // how long to allow each command to run
 
 char sensor[5];
  /*read sensor value string, 1 stands for black, 0 starnds for white, i.e 10000 means the first sensor(from left) detect black line, other 4 sensors detected white ground */
@@ -122,8 +122,22 @@ void setup()
 
 void auto_tracking(){
  String sensorval= read_sensor_values();
+ Serial.println(sensorval);
+ if (sensorval=="10000") {
+    go_Left();
+    set_Motorspeed(-0.5*TURN_SPEED, TURN_SPEED);
+    delay(CONTROL_DELAY);
+    stop_Stop();
+ }
 
- if (sensorval=="10100" or sensorval=="00100" or sensorval=="01100" or sensorval=="11100" or sensorval=="11000" or sensorval=="10000" or sensorval=="01000" or sensorval=="11110") { 
+ if (sensorval=="11000" or sensorval=="01000") {
+    go_Left();
+    set_Motorspeed(-0.25*TURN_SPEED, TURN_SPEED);
+    delay(CONTROL_DELAY);
+    stop_Stop();
+ }
+ 
+ if (sensorval=="10100" or sensorval=="00100" or sensorval=="01100" or sensorval=="11100" or sensorval=="11000" or sensorval=="11110") { 
     //The black line is in the left of the car, need  left turn 
     go_Left();  //Turn left
     set_Motorspeed(0, TURN_SPEED);
@@ -131,7 +145,21 @@ void auto_tracking(){
     stop_Stop();
   }
 
- if (sensorval=="00101" or sensorval=="00110" or sensorval=="00111" or sensorval=="00011" or sensorval=="00001" or sensorval=="00010" or sensorval=="01111") { 
+ if (sensorval=="00001") {
+    go_Right();
+    set_Motorspeed(TURN_SPEED, -0.5*TURN_SPEED);
+    delay(CONTROL_DELAY);
+    stop_Stop();
+ }
+
+ if (sensorval=="00011" or sensorval=="00010") {
+    go_Right();
+    set_Motorspeed(TURN_SPEED, -0.25*TURN_SPEED);
+    delay(CONTROL_DELAY);
+    stop_Stop();
+ }
+ 
+ if (sensorval=="00101" or sensorval=="00110" or sensorval=="00111" or sensorval=="00011" or sensorval=="01111") { 
     //The black line is on the right of the car, need right turn 
     go_Right();  //Turn right
     set_Motorspeed(TURN_SPEED, 0);
