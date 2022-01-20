@@ -5,6 +5,7 @@
 // data pins
 #define DATA_PIN 22
 #define BUTTON_PIN 13
+#define POT_PIN A0
 
 #define FRAMES_PER_SECOND 120
 
@@ -28,7 +29,9 @@ float current_hue = 0;
 static float cycle_delta = 32; // hue space between colors
 
 unsigned long cycle_timer;
-int N = 200; // number of steps to reach the next color
+int N = 800; // number of steps to reach the next color
+
+int brightness = 127;
 
 // push button utility function
 void press_wait(int pin) {
@@ -49,7 +52,7 @@ void cycle_colors() {
   // take one step in color change
   current_hue += delta;
   
-  leds.fill_solid(CHSV(current_hue, 255, 127));
+  leds.fill_solid(CHSV(current_hue, 255, brightness));
   FastLED.show(current_hue);
   FastLED.delay(1000/FRAMES_PER_SECOND);
 }
@@ -81,11 +84,20 @@ void switch_color_modes() {
     case COLOR_MODE::CYCLE:
       current_hue = target_hue;
       cycle_timer = millis();
-      leds.fill_solid(CHSV(current_hue, 255, 127));
+      leds.fill_solid(CHSV(current_hue, 255, brightness));
       FastLED.show();
+      FastLED.delay(1000/FRAMES_PER_SECOND);
       break;
   }
 }
+
+void update_brightness() {
+  int pot_value = analogRead(POT_PIN);
+  brightness = map(pot_value, 0, 1024, 0, 255);
+  FastLED.setBrightness(brightness);
+  FastLED.show();
+}
+
 
 // make changes to colors 
 void update_colors() {
@@ -99,6 +111,9 @@ void update_colors() {
       update_cycle_hue();
       break;
   }  
+
+  // always update brightness
+  update_brightness();
 }
 
 void setup() { 
