@@ -1,10 +1,10 @@
 #include <FastLED.h>
 
-#define NUM_LEDS 10
+#define NUM_LEDS 100
 
 // data pins
-#define DATA_PIN 22
-#define BUTTON_PIN 13
+#define DATA_PIN 3
+#define BUTTON_PIN 9
 #define POT_PIN A0
 
 #define FRAMES_PER_SECOND 120
@@ -15,7 +15,7 @@
 CRGBArray<NUM_LEDS> leds{};
 
 // warm white (or as warm as we can get with these LEDs)
-CHSV HSV_WHITE(56.09, 68.05, 66.27);
+CRGB HSV_WHITE(255, 147, 41);
 
 // enum to track the different color modes
 enum COLOR_MODE {WHITE, RAINBOW, CYCLE};
