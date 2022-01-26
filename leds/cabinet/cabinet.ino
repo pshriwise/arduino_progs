@@ -116,7 +116,7 @@ void update_colors() {
   update_brightness();
 }
 
-void setup() { 
+void setup() {
   // turn on toggle button pin
   pinMode(BUTTON_PIN, INPUT); 
   
