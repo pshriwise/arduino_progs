@@ -9,13 +9,16 @@
 
 #define FRAMES_PER_SECOND 120
 
-#define CYCLE_TIME 15000; // time between color cycles in ms
+#define CYCLE_TIME 10000; // time between color cycles in ms
 
 // array of LED data
 CRGBArray<NUM_LEDS> leds{};
 
 // warm white (or as warm as we can get with these LEDs)
-CRGB HSV_WHITE(255, 147, 41);
+CHSV HSV_WHITE(56.09, 68.05, 66.27);
+CRGB WARM_WHITE(255, 120, 20);
+float MAX_WHITE_BRIGHTNESS = 115;
+float MAX_COLOR_BRIGHTNESS = 180;
 
 // enum to track the different color modes
 enum COLOR_MODE {WHITE, RAINBOW, CYCLE};
@@ -48,12 +51,12 @@ void cycle_colors() {
   if (abs(current_hue - target_hue) < 0.1) { return; }
 
   float delta = cycle_delta / N;
-  
+
   // take one step in color change
   current_hue += delta;
-  
+
   leds.fill_solid(CHSV(current_hue, 255, brightness));
-  FastLED.show(current_hue);
+  FastLED.show();
   FastLED.delay(1000/FRAMES_PER_SECOND);
 }
 
@@ -67,15 +70,32 @@ void update_cycle_hue() {
       target_hue -= 255;
       current_hue -= 255;
     }
-  }  
+  }
+}
+
+void update_brightness() {
+  int pot_value = analogRead(POT_PIN);
+  brightness = map(pot_value, 0, 1024, 0, 255);
+  // cap brightness based on observed max
+  switch(color_mode) {
+    case COLOR_MODE::WHITE:
+      brightness = min(brightness, MAX_WHITE_BRIGHTNESS);
+      break;
+    default:
+      brightness = min(brightness, MAX_COLOR_BRIGHTNESS);
+  }
+  FastLED.setBrightness(brightness);
+  FastLED.show();
 }
 
 // update color mode based on the "color_mode" state variable
 void switch_color_modes() {
+  update_brightness();
+
   switch(color_mode) {
     case COLOR_MODE::WHITE:
-      leds.fill_solid(HSV_WHITE);
-      FastLED.show();  
+      leds.fill_solid(WARM_WHITE);
+      FastLED.show();
       break;
     case COLOR_MODE::RAINBOW:
       leds.fill_rainbow(0);
@@ -91,15 +111,7 @@ void switch_color_modes() {
   }
 }
 
-void update_brightness() {
-  int pot_value = analogRead(POT_PIN);
-  brightness = map(pot_value, 0, 1024, 0, 255);
-  FastLED.setBrightness(brightness);
-  FastLED.show();
-}
-
-
-// make changes to colors 
+// make changes to colors
 void update_colors() {
   switch(color_mode) {
     case COLOR_MODE::WHITE:
@@ -110,7 +122,7 @@ void update_colors() {
       cycle_colors();
       update_cycle_hue();
       break;
-  }  
+  }
 
   // always update brightness
   update_brightness();
@@ -118,11 +130,11 @@ void update_colors() {
 
 void setup() {
   // turn on toggle button pin
-  pinMode(BUTTON_PIN, INPUT); 
-  
+  pinMode(BUTTON_PIN, INPUT);
+
   // register LEDs with libarary
-  FastLED.addLeds<WS2812, DATA_PIN, GRB>(leds, NUM_LEDS);
-  
+  FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
+
   // start with all LEDs off
   leds.fill_solid(CRGB::Black);
   FastLED.show();
@@ -131,7 +143,7 @@ void setup() {
   switch_color_modes();
 }
 
-void loop() { 
+void loop() {
   if (digitalRead(BUTTON_PIN) == HIGH) {
     press_wait(BUTTON_PIN);
     // toggle state variable
