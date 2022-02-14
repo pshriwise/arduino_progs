@@ -1,0 +1,3 @@
+[submodule "lan/ESP8266-Packet-Monitor"]
+	path = lan/ESP8266-Packet-Monitor
+	url = https://github.com/HakCat-Tech/ESP8266-Packet-Monitor
